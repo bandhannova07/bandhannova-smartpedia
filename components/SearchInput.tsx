@@ -181,7 +181,6 @@ export default function SearchInput({ compact = false, onFocusChange }: SearchIn
                         }}
                         onKeyDown={handleKeyDown}
                         autoComplete="off"
-                        autoFocus={!compact}
                     />
 
                     {query.trim() && (
