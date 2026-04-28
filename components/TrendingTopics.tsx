@@ -24,7 +24,7 @@ export default function TrendingTopics() {
     const router = useRouter();
 
     const handleTopicClick = (query: string) => {
-        router.push(`/search?q=${encodeURIComponent(query)}&mode=detailed`);
+        router.push(`/search?q=${encodeURIComponent(query)}`);
     };
 
     return (

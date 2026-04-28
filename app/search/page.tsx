@@ -202,10 +202,10 @@ function SearchContent() {
             <header className="sticky top-0 z-50 glass border-b border-[var(--card-border)]">
                 <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-4">
                     <Link href="/" className="flex-shrink-0 flex items-center gap-2 group">
-                        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center shadow-md shadow-indigo-500/15 group-hover:shadow-lg group-hover:shadow-indigo-500/25 transition-shadow">
+                        <div className="w-8 h-8 rounded-lg bg-[var(--card)] border border-[var(--card-border)] flex items-center justify-center shadow-md shadow-indigo-500/10 group-hover:shadow-lg group-hover:shadow-indigo-500/20 transition-shadow">
                             <img src="/favicon.ico" alt="Smartpedia" className="w-5 h-5 object-contain" />
                         </div>
-                        <span className="hidden sm:block text-lg font-bold text-gradient">
+                        <span className="hidden sm:block text-lg font-dynapuff font-bold text-indigo-500">
                             Smartpedia
                         </span>
                     </Link>
@@ -692,7 +692,7 @@ function SearchContent() {
                                         <button
                                             key={i}
                                             onClick={() => {
-                                                const url = `/search?q=${encodeURIComponent(s)}&mode=${mode}`;
+                                                const url = `/search?q=${encodeURIComponent(s)}`;
                                                 window.location.href = url;
                                             }}
                                             className="flex items-center gap-2 px-4 py-2 rounded-full bg-[var(--card)] border border-[var(--card-border)] text-sm text-[var(--foreground)] hover:bg-indigo-50 dark:hover:bg-indigo-950/20 hover:border-indigo-300 dark:hover:border-indigo-700 transition-all cursor-pointer"

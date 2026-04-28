@@ -14,7 +14,7 @@ export default function FollowUpChips({ questions, className = '' }: FollowUpChi
     if (!questions || questions.length === 0) return null;
 
     const handleClick = (question: string) => {
-        router.push(`/search?q=${encodeURIComponent(question)}&mode=detailed`);
+        router.push(`/search?q=${encodeURIComponent(question)}`);
     };
 
     return (

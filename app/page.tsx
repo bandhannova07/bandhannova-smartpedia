@@ -36,7 +36,7 @@ function RandomKnowledgeButton() {
   const randomTopic = randomTopics[Math.floor(Math.random() * randomTopics.length)];
   return (
     <Link
-      href={`/search?q=${encodeURIComponent(randomTopic)}&mode=eli5`}
+      href={`/search?q=${encodeURIComponent(randomTopic)}`}
       className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium
         bg-gradient-to-r from-amber-500/10 to-orange-500/10 text-amber-700 dark:text-amber-300
         border border-amber-200 dark:border-amber-800/50
@@ -69,7 +69,7 @@ export default function Home() {
           <div className="w-[100px] h-[100px] md:w-10 md:h-10 rounded-xl bg-[var(--card)] border border-[var(--card-border)] flex items-center justify-center shadow-sm shadow-indigo-500/10">
             <img src="/favicon.ico" alt="Smartpedia" className="w-5 h-5 md:w-6 md:h-6 object-contain" />
           </div>
-          <span className="text-sm md:text-base font-extrabold tracking-[0.15em] text-indigo-500 uppercase">
+          <span className="text-sm md:text-base font-dynapuff font-extrabold tracking-[0.15em] text-indigo-500 uppercase">
             Smartpedia
           </span>
         </div>
@@ -91,7 +91,7 @@ export default function Home() {
           {/* BandhanNova Logo with aligned Smartpedia text */}
           <div className="relative mt-2 flex flex-col items-end">
             <img src="/bandhannova-logo-final.svg" alt="BandhanNova" className="h-10 md:h-20 w-auto" />
-            <span className="text-xs md:text-lg font-extrabold tracking-[0.25em] text-indigo-500 uppercase mt-1 md:mt-2 select-none">
+            <span className="text-xs md:text-lg font-dynapuff font-extrabold tracking-[0.25em] text-indigo-500 uppercase mt-1 md:mt-2 select-none">
               Smartpedia
             </span>
           </div>
