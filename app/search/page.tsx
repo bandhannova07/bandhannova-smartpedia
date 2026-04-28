@@ -199,7 +199,7 @@ function SearchContent() {
     return (
         <div className="min-h-screen bg-[var(--background)] text-[var(--foreground)]">
             {/* Header */}
-            <header className="sticky top-0 z-50 glass border-b border-[var(--card-border)]">
+            <header className="sticky top-0 z-50 bg-[var(--background)] border-b border-[var(--card-border)]">
                 <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-4">
                     <Link href="/" className="flex-shrink-0 flex items-center gap-2 group">
                         <div className="w-8 h-8 rounded-lg bg-[var(--card)] border border-[var(--card-border)] flex items-center justify-center shadow-md shadow-indigo-500/10 group-hover:shadow-lg group-hover:shadow-indigo-500/20 transition-shadow">

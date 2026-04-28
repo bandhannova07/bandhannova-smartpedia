@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Search, ArrowRight, Sparkles, Clock } from 'lucide-react';
+import { Search, ArrowRight, Sparkles, Clock, X } from 'lucide-react';
 interface SearchInputProps {
     compact?: boolean;
     onFocusChange?: (focused: boolean) => void;
@@ -26,10 +26,27 @@ export default function SearchInput({ compact = false, onFocusChange }: SearchIn
     const [selectedIndex, setSelectedIndex] = useState(-1);
     const [placeholderIndex, setPlaceholderIndex] = useState(0);
     const [isTransitioning, setIsTransitioning] = useState(true);
+    const [searchHistory, setSearchHistory] = useState<string[]>([]);
     const router = useRouter();
     const searchParams = useSearchParams();
     const suggestRef = useRef<HTMLDivElement>(null);
     const debounceRef = useRef<NodeJS.Timeout | null>(null);
+
+    useEffect(() => {
+        const history = localStorage.getItem('smartpedia_search_history');
+        if (history) {
+            try { setSearchHistory(JSON.parse(history)); } catch { setSearchHistory([]); }
+        }
+    }, []);
+
+    const removeFromHistory = (e: React.MouseEvent, termToRemove: string) => {
+        e.stopPropagation();
+        setSearchHistory((prev) => {
+            const updated = prev.filter(item => item.toLowerCase() !== termToRemove.toLowerCase());
+            localStorage.setItem('smartpedia_search_history', JSON.stringify(updated));
+            return updated;
+        });
+    };
 
     // Infinite placeholder rotation animation
     useEffect(() => {
@@ -98,15 +115,29 @@ export default function SearchInput({ compact = false, onFocusChange }: SearchIn
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
+    const saveToHistory = (searchTerm: string) => {
+        const trimmed = searchTerm.trim();
+        if (!trimmed) return;
+        
+        setSearchHistory((prev) => {
+            const filtered = prev.filter(item => item.toLowerCase() !== trimmed.toLowerCase());
+            const updated = [trimmed, ...filtered].slice(0, 10);
+            localStorage.setItem('smartpedia_search_history', JSON.stringify(updated));
+            return updated;
+        });
+    };
+
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
         if (query.trim()) {
+            saveToHistory(query.trim());
             setShowSuggestions(false);
             router.push(`/search?q=${encodeURIComponent(query.trim())}`);
         }
     };
 
     const handleSelectSuggestion = (s: string) => {
+        saveToHistory(s);
         setQuery(s);
         setShowSuggestions(false);
         router.push(`/search?q=${encodeURIComponent(s)}`);
@@ -172,14 +203,37 @@ export default function SearchInput({ compact = false, onFocusChange }: SearchIn
                         }}
                         onFocus={() => {
                             setIsFocused(true);
-                            if (suggestions.length > 0) setShowSuggestions(true);
+                            setShowSuggestions(true);
                             if (onFocusChange) onFocusChange(true);
                         }}
                         onBlur={() => {
                             setIsFocused(false);
                             if (onFocusChange) onFocusChange(false);
                         }}
-                        onKeyDown={handleKeyDown}
+                        onKeyDown={(e) => {
+                            const filteredHistory = query.trim() 
+                                ? searchHistory.filter(item => item.toLowerCase().includes(query.toLowerCase()))
+                                : searchHistory;
+                            const combinedSuggestions = [
+                                ...filteredHistory.map(h => ({ type: 'history' as const, text: h })),
+                                ...suggestions.filter(s => !filteredHistory.some(h => h.toLowerCase() === s.toLowerCase())).map(s => ({ type: 'suggest' as const, text: s }))
+                            ];
+
+                            if (!showSuggestions || combinedSuggestions.length === 0) return;
+
+                            if (e.key === 'ArrowDown') {
+                                e.preventDefault();
+                                setSelectedIndex(prev => (prev + 1) % combinedSuggestions.length);
+                            } else if (e.key === 'ArrowUp') {
+                                e.preventDefault();
+                                setSelectedIndex(prev => prev <= 0 ? combinedSuggestions.length - 1 : prev - 1);
+                            } else if (e.key === 'Enter' && selectedIndex >= 0) {
+                                e.preventDefault();
+                                handleSelectSuggestion(combinedSuggestions[selectedIndex].text);
+                            } else if (e.key === 'Escape') {
+                                setShowSuggestions(false);
+                            }
+                        }}
                         autoComplete="off"
                     />
 
@@ -198,38 +252,62 @@ export default function SearchInput({ compact = false, onFocusChange }: SearchIn
             </form>
 
             {/* Search Suggestions Dropdown */}
-            {showSuggestions && suggestions.length > 0 && (
-                <div className="absolute top-full left-0 right-0 z-50 mt-2 py-2.5 rounded-xl bg-[var(--card)]/80 backdrop-blur-xl border border-[var(--card-border)] shadow-2xl shadow-indigo-500/10 overflow-hidden animate-fade-in max-h-[60vh] overflow-y-auto flex flex-col">
-                    <div className="px-2 py-1 flex flex-col gap-0.5 w-full">
-                        {suggestions.map((s, i) => (
-                            <button
-                                key={i}
-                                onMouseDown={() => handleSelectSuggestion(s)}
-                                className={`w-full flex items-center gap-3 px-3.5 py-3 text-sm text-left rounded-xl transition-all duration-200 cursor-pointer ${i === selectedIndex
-                                    ? 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-semibold shadow-sm'
-                                    : 'text-[var(--foreground)] hover:bg-[var(--card-border)]/30 hover:translate-x-1'
-                                    }`}
-                            >
-                                <div className={`w-7 h-7 rounded-full flex items-center justify-center transition-all duration-200 flex-shrink-0 ${i === selectedIndex ? 'bg-indigo-500 text-white shadow-md shadow-indigo-500/25' : 'bg-[var(--card-border)]/40 text-[var(--muted)]'}`}>
-                                    <Search className="w-3.5 h-3.5" />
-                                </div>
-                                <span className="truncate flex-1">{s}</span>
-                            </button>
-                        ))}
-                    </div>
+            {showSuggestions && (() => {
+                const filteredHistory = query.trim() 
+                    ? searchHistory.filter(item => item.toLowerCase().includes(query.toLowerCase()))
+                    : searchHistory;
+                const combinedSuggestions = [
+                    ...filteredHistory.map(h => ({ type: 'history' as const, text: h })),
+                    ...suggestions.filter(s => !filteredHistory.some(h => h.toLowerCase() === s.toLowerCase())).map(s => ({ type: 'suggest' as const, text: s }))
+                ];
 
-                    {/* Keyboard Shortcuts Hint */}
-                    <div className="px-4 py-2 mt-1 border-t border-[var(--card-border)]/40 flex items-center justify-between text-[10px] font-bold text-[var(--muted-light)] select-none">
-                        <span>Search results</span>
-                        <div className="flex items-center gap-1.5">
-                            <span className="px-1.5 py-0.5 rounded bg-[var(--card-border)]/40">↑↓</span>
-                            <span>navigate</span>
-                            <span className="px-1.5 py-0.5 rounded bg-[var(--card-border)]/40 ml-1">↵</span>
-                            <span>select</span>
+                if (combinedSuggestions.length === 0) return null;
+
+                return (
+                    <div className="absolute top-full left-0 right-0 z-50 mt-2 py-2.5 rounded-xl bg-[var(--card)]/95 backdrop-blur-xl border border-[var(--card-border)] shadow-2xl shadow-indigo-500/10 overflow-hidden animate-fade-in max-h-[60vh] overflow-y-auto flex flex-col">
+                        <div className="px-2 py-1 flex flex-col gap-0.5 w-full">
+                            {combinedSuggestions.map((item, i) => (
+                                <div
+                                    key={i}
+                                    onMouseDown={() => handleSelectSuggestion(item.text)}
+                                    className={`w-full flex items-center justify-between px-3.5 py-3 text-sm text-left rounded-xl transition-all duration-200 cursor-pointer ${i === selectedIndex
+                                        ? 'bg-indigo-500/10 font-semibold text-indigo-600 dark:text-indigo-400'
+                                        : 'text-[var(--foreground)] hover:bg-[var(--card-border)]/30 hover:translate-x-1'
+                                        }`}
+                                >
+                                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                                        <div className={`w-7 h-7 rounded-full flex items-center justify-center transition-all duration-200 flex-shrink-0 ${i === selectedIndex ? 'bg-indigo-500 text-white shadow-md shadow-indigo-500/25' : 'bg-[var(--card-border)]/40 text-[var(--muted)]'}`}>
+                                            {item.type === 'history' ? <Clock className="w-3.5 h-3.5" /> : <Search className="w-3.5 h-3.5" />}
+                                        </div>
+                                        <span className="truncate flex-1">{item.text}</span>
+                                    </div>
+                                    
+                                    {item.type === 'history' && (
+                                        <button 
+                                            onMouseDown={(e) => removeFromHistory(e, item.text)}
+                                            className="p-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 text-[var(--muted-light)] hover:text-red-500 cursor-pointer transition-colors flex-shrink-0"
+                                            title="Remove from history"
+                                        >
+                                            <X className="w-3.5 h-3.5" />
+                                        </button>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Keyboard Shortcuts Hint */}
+                        <div className="px-4 py-2 mt-1 border-t border-[var(--card-border)]/40 flex items-center justify-between text-[10px] font-bold text-[var(--muted-light)] select-none">
+                            <span>Search results</span>
+                            <div className="flex items-center gap-1.5">
+                                <span className="px-1.5 py-0.5 rounded bg-[var(--card-border)]/40">↑↓</span>
+                                <span>navigate</span>
+                                <span className="px-1.5 py-0.5 rounded bg-[var(--card-border)]/40 ml-1">↵</span>
+                                <span>select</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-            )}
+                );
+            })()}
         </div>
     );
 }
