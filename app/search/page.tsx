@@ -251,7 +251,7 @@ function SearchContent() {
             </div>
 
             {/* Main Content */}
-            <main className="max-w-7xl mx-auto px-4 py-6">
+            <main className="max-w-7xl mx-auto px-4 py-6 min-h-[75vh]">
                 {/* Results count */}
                 {query && (
                     <div className="mb-4 sm:pl-[60px] lg:pl-[120px]">
