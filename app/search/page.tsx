@@ -97,6 +97,7 @@ function SearchContent() {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [selectedImage, setSelectedImage] = useState<SearchResultData | null>(null);
     const [selectedVideo, setSelectedVideo] = useState<SearchResultData | null>(null);
+    const [activeMusicTrack, setActiveMusicTrack] = useState<any | null>(null);
     const [zoomScale, setZoomScale] = useState<number>(1);
 
     useEffect(() => {
@@ -270,9 +271,9 @@ function SearchContent() {
                     <div className="flex-1 max-w-3xl">
                         {/* Category-aware Loading State */}
                         {isLoading && (
-                            <div className="space-y-6 animate-pulse w-full">
+                            <div className="space-y-6 animate-pulse w-full min-h-[80vh]">
                                 {activeCategory === 'images' && (
-                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 mt-2">
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-2">
                                         {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((i) => (
                                             <div key={i} className="aspect-square rounded-xl bg-[var(--card)] border border-[var(--card-border)] relative overflow-hidden">
                                                 <div className="w-full h-3/4 bg-[var(--card-border)]/40" />
@@ -406,7 +407,7 @@ function SearchContent() {
                         {/* Search Engine Results */}
                         {/* Images View */}
                         {activeCategory === 'images' && allResults.length > 0 && (
-                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 mt-2 mb-6 animate-fade-in">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-2 mb-6 animate-fade-in">
                                 {allResults.map((result: any, index) => (
                                     <div
                                         key={index}
@@ -494,12 +495,18 @@ function SearchContent() {
                                     const ytId = getYoutubeId(result.url);
                                     const thumb = result.thumbnail_src || result.img_src || (ytId ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg` : '');
                                     return (
-                                        <a
+                                        <div
                                             key={index}
-                                            href={result.url}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                            className="group block overflow-hidden rounded-2xl bg-[var(--card)] border border-[var(--card-border)] hover:shadow-xl hover:shadow-indigo-500/10 transition-all p-3"
+                                            onClick={(e) => {
+                                                const trackYtId = getYoutubeId(result.url);
+                                                if (trackYtId) {
+                                                    e.preventDefault();
+                                                    setActiveMusicTrack(result);
+                                                } else {
+                                                    window.open(result.url, '_blank', 'noreferrer');
+                                                }
+                                            }}
+                                            className="group block overflow-hidden rounded-2xl bg-[var(--card)] border border-[var(--card-border)] hover:shadow-xl hover:shadow-indigo-500/10 transition-all p-3 cursor-pointer"
                                         >
                                             <div className="aspect-square relative overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
                                                 {thumb ? (
@@ -517,7 +524,7 @@ function SearchContent() {
                                                 <p className="font-bold text-sm text-[var(--foreground)] group-hover:text-indigo-500 transition-colors line-clamp-1">{result.title}</p>
                                                 <p className="text-[var(--muted)] truncate mt-0.5 text-[11px] font-semibold">{getDomain(result.url)}</p>
                                             </div>
-                                        </a>
+                                        </div>
                                     );
                                 })}
                             </div>
@@ -897,6 +904,36 @@ function SearchContent() {
                                 {selectedVideo.snippet}
                             </p>
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Persistent Music Player Bar */}
+            {activeMusicTrack && (
+                <div className="fixed bottom-20 sm:bottom-6 right-4 z-50 bg-[var(--card)]/95 backdrop-blur-xl border border-[var(--card-border)] rounded-2xl p-4 shadow-2xl animate-slide-in flex flex-col gap-3 w-[300px] sm:w-[360px]">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                            <span className="text-lg animate-pulse">🎵</span>
+                            <div className="min-w-0">
+                                <p className="font-bold text-xs text-[var(--foreground)] truncate select-none">Playing Track</p>
+                                <p className="text-[11px] text-[var(--muted)] truncate select-none">{activeMusicTrack.title}</p>
+                            </div>
+                        </div>
+                        <button 
+                            onClick={() => setActiveMusicTrack(null)}
+                            className="p-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 text-[var(--muted)] cursor-pointer transition-colors flex-shrink-0"
+                        >
+                            <X className="w-3.5 h-3.5" />
+                        </button>
+                    </div>
+                    
+                    <div className="w-full aspect-video rounded-xl overflow-hidden relative bg-black border border-[var(--card-border)]/60">
+                        <iframe 
+                            src={`https://www.youtube.com/embed/${getYoutubeId(activeMusicTrack.url)}?autoplay=1&modestbranding=1&showinfo=0&rel=0`} 
+                            className="absolute inset-0 w-full h-full"
+                            allow="autoplay; encrypted-media"
+                            allowFullScreen
+                        />
                     </div>
                 </div>
             )}
