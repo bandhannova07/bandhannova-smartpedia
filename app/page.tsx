@@ -66,7 +66,7 @@ export default function Home() {
       {/* Smartpedia Logo - Top Left (during focus) */}
       {isFocused && (
         <div className="fixed top-4 left-4 z-50 animate-fade-in flex items-center gap-2 select-none pointer-events-none">
-          <div className="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-[var(--card)] border border-[var(--card-border)] flex items-center justify-center shadow-sm shadow-indigo-500/10">
+          <div className="w-[100px] h-[100px] md:w-10 md:h-10 rounded-xl bg-[var(--card)] border border-[var(--card-border)] flex items-center justify-center shadow-sm shadow-indigo-500/10">
             <img src="/favicon.ico" alt="Smartpedia" className="w-5 h-5 md:w-6 md:h-6 object-contain" />
           </div>
           <span className="text-sm md:text-base font-extrabold tracking-[0.15em] text-indigo-500 uppercase">
@@ -84,8 +84,8 @@ export default function Home() {
         {/* Logo Area */}
         <div className={`flex flex-col items-center gap-4 md:gap-6 animate-fade-in-up transition-all duration-500 ease-in-out ${isFocused ? 'opacity-0 h-0 overflow-hidden pointer-events-none -translate-y-full' : ''}`}>
           {/* Brand Icon at the very top */}
-          <div className="w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-[var(--card)] border border-[var(--card-border)] flex items-center justify-center shadow-lg shadow-indigo-500/10 animate-float">
-            <img src="/favicon.ico" alt="Smartpedia" className="w-8 h-8 md:w-10 md:h-10 object-contain" />
+          <div className="w-16 h-16 md:w-24 md:h-24 rounded-2xl bg-[var(--card)] border border-[var(--card-border)] flex items-center justify-center shadow-lg shadow-indigo-500/10 animate-float">
+            <img src="/favicon.ico" alt="Smartpedia" className="w-10 h-10 md:w-14 md:h-14 object-contain" />
           </div>
 
           {/* BandhanNova Logo with aligned Smartpedia text */}
