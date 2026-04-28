@@ -84,7 +84,7 @@ export default function Home() {
         {/* Logo Area */}
         <div className={`flex flex-col items-center gap-4 md:gap-6 animate-fade-in-up transition-all duration-500 ease-in-out ${isFocused ? 'opacity-0 h-0 overflow-hidden pointer-events-none -translate-y-full' : ''}`}>
           {/* Brand Icon at the very top */}
-          <div className="w-16 h-16 md:w-24 md:h-24 rounded-2xl bg-[var(--card)] border border-[var(--card-border)] flex items-center justify-center shadow-lg shadow-indigo-500/10 animate-float">
+          <div className="w-16 h-16 md:w-24 md:h-24 rounded-xl bg-[var(--card)] border border-[var(--card-border)] flex items-center justify-center shadow-lg shadow-indigo-500/10 animate-float">
             <img src="/favicon.ico" alt="Smartpedia" className="w-10 h-10 md:w-14 md:h-14 object-contain" />
           </div>
 

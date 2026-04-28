@@ -11,12 +11,12 @@
 
 /* --- CSS Custom Properties --- */
 :root {
-  --background: #fafbfc;
+  --background: #f1f5f9;
   --foreground: #0f172a;
   --card: #ffffff;
-  --card-border: #e2e8f0;
-  --muted: #64748b;
-  --muted-light: #94a3b8;
+  --card-border: #cbd5e1;
+  --muted: #475569;
+  --muted-light: #64748b;
 
   /* Brand Colors */
   --brand-start: #6366f1;
