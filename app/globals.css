@@ -109,8 +109,8 @@ body {
 
 /* --- Scrollbar --- */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
 }
 
 ::-webkit-scrollbar-track {
@@ -118,12 +118,21 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--muted-light);
+  background: var(--card-border);
   border-radius: var(--radius-full);
+  transition: background 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--muted);
+  background: var(--muted-light);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #1e2030;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #313552;
 }
 
 /* --- Keyframe Animations --- */

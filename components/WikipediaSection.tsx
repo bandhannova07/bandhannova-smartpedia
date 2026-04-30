@@ -76,7 +76,7 @@ export default function WikipediaSection({ results }: WikipediaSectionProps) {
                             rel="noopener noreferrer"
                             className="group/wiki inline-flex items-start gap-1.5"
                         >
-                            <h3 className="text-[17px] font-bold text-slate-900 dark:text-slate-100 group-hover/wiki:text-indigo-600 dark:group-hover/wiki:text-indigo-400 transition-colors leading-snug">
+                            <h3 className="text-[17px] font-bold text-slate-900 dark:text-white group-hover/wiki:text-indigo-600 dark:group-hover/wiki:text-indigo-400 transition-colors leading-snug">
                                 {decodeHtmlEntities(mainResult.title)}
                             </h3>
                             <ExternalLink className="w-3.5 h-3.5 mt-1 text-gray-400 opacity-0 group-hover/wiki:opacity-100 transition-opacity flex-shrink-0" />
@@ -138,7 +138,7 @@ export default function WikipediaSection({ results }: WikipediaSectionProps) {
                                 >
                                     <div className="flex items-center gap-2 mb-0.5">
                                         <BookOpen className="w-3 h-3 text-gray-400 group-hover/item:text-indigo-500 transition-colors flex-shrink-0" />
-                                        <h4 className="text-[14px] font-semibold text-slate-800 dark:text-slate-200 group-hover/item:text-indigo-600 dark:group-hover/item:text-indigo-400 transition-colors truncate">
+                                        <h4 className="text-[14px] font-semibold text-slate-800 dark:text-white group-hover/item:text-indigo-600 dark:group-hover/item:text-indigo-400 transition-colors truncate">
                                             {decodeHtmlEntities(result.title)}
                                         </h4>
                                     </div>
